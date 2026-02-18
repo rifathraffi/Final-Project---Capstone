@@ -1,0 +1,8 @@
+com\example\productcatalog\config\TestApplication.class
+com\example\productcatalog\config\TestSecurityConfig$1.class
+com\example\productcatalog\controller\ProductControllerTest.class
+com\example\productcatalog\repository\ProductRepositoryTest.class
+com\example\productcatalog\service\ProductServiceTest.class
+com\example\productcatalog\config\TestSecurityConfig.class
+com\example\productcatalog\ProductCatalogApplicationTests.class
+com\example\productcatalog\ProductCatalogIntegrationTest.class

@@ -1,5 +1,7 @@
 package com.example.productcatalog;
 
+import com.example.productcatalog.config.TestApplication;
+import com.example.productcatalog.config.TestSecurityConfig;
 import com.example.productcatalog.model.ProductDto;
 import com.example.productcatalog.repository.ProductRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,7 +9,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
@@ -20,8 +24,10 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
+@SpringBootTest(classes = TestApplication.class)
 @ActiveProfiles("test")
+@Import({TestSecurityConfig.class})
+@WithMockUser(username = "test", roles = {"ADMIN"})
 public class ProductCatalogIntegrationTest {
 
 	@Autowired

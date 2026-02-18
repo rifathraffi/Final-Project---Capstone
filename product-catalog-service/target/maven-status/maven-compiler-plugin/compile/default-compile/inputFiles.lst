@@ -1,0 +1,12 @@
+C:\Microservices\Microservices-Capstone-master\product-catalog-service\src\main\java\com\example\productcatalog\config\SecurityConfig.java
+C:\Microservices\Microservices-Capstone-master\product-catalog-service\src\main\java\com\example\productcatalog\controller\ProductController.java
+C:\Microservices\Microservices-Capstone-master\product-catalog-service\src\main\java\com\example\productcatalog\model\InventoryError.java
+C:\Microservices\Microservices-Capstone-master\product-catalog-service\src\main\java\com\example\productcatalog\model\InventoryResult.java
+C:\Microservices\Microservices-Capstone-master\product-catalog-service\src\main\java\com\example\productcatalog\model\InventorySuccess.java
+C:\Microservices\Microservices-Capstone-master\product-catalog-service\src\main\java\com\example\productcatalog\model\Product.java
+C:\Microservices\Microservices-Capstone-master\product-catalog-service\src\main\java\com\example\productcatalog\model\ProductDto.java
+C:\Microservices\Microservices-Capstone-master\product-catalog-service\src\main\java\com\example\productcatalog\ProductCatalogApplication.java
+C:\Microservices\Microservices-Capstone-master\product-catalog-service\src\main\java\com\example\productcatalog\repository\ProductRepository.java
+C:\Microservices\Microservices-Capstone-master\product-catalog-service\src\main\java\com\example\productcatalog\security\JwtAuthenticationFilter.java
+C:\Microservices\Microservices-Capstone-master\product-catalog-service\src\main\java\com\example\productcatalog\security\JwtUtil.java
+C:\Microservices\Microservices-Capstone-master\product-catalog-service\src\main\java\com\example\productcatalog\service\ProductService.java

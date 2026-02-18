@@ -8,6 +8,7 @@ import com.example.order.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,7 @@ public class OrderController {
 	}
 
 	@PostMapping
+//	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<OrderDto> create(@Valid @RequestBody CreateOrderRequest request) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(request));
 	}
@@ -49,7 +51,11 @@ public class OrderController {
 	}
 
 	@GetMapping
-	public List<OrderDto> listAll() {
+	@PreAuthorize("hasRole('ADMIN')")
+	public List<OrderDto> listOrders(@RequestParam(required = false) String customerId) {
+		if (customerId != null && !customerId.isEmpty()) {
+			return orderService.findByCustomer(customerId);
+		}
 		return orderService.findAll();
 	}
 
@@ -59,6 +65,7 @@ public class OrderController {
 	}
 
 	@PatchMapping("/{id}/status/{status}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<OrderDto> updateStatus(
 			@PathVariable Long id,
 			@PathVariable OrderStatusEnum status) {

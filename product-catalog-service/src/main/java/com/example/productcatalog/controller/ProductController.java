@@ -9,6 +9,7 @@ import com.example.productcatalog.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -34,11 +35,13 @@ public class ProductController {
 	}
 
 	@GetMapping
+	@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 	public List<ProductDto> list() {
 		return productService.findAll();
 	}
 
 	@GetMapping("/{id}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 	public ResponseEntity<ProductDto> getById(@PathVariable Long id) {
 		return productService.findById(id)
 				.map(ResponseEntity::ok)
@@ -46,13 +49,15 @@ public class ProductController {
 	}
 
 	@GetMapping("/sku/{sku}")
-	public ResponseEntity<ProductDto> getBySku(@PathVariable String sku) {
+	@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+	public ResponseEntity<ProductDto> getBySky(@PathVariable String sku) {
 		return productService.findBySku(sku)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@PostMapping
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<ProductDto> create(@Valid @RequestBody ProductDto dto) {
 		try {
 			return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(dto));
@@ -62,6 +67,7 @@ public class ProductController {
 	}
 
 	@PutMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<ProductDto> update(@PathVariable Long id, @Valid @RequestBody ProductDto dto) {
 		return productService.update(id, dto)
 				.map(ResponseEntity::ok)
@@ -69,6 +75,7 @@ public class ProductController {
 	}
 
 	@PatchMapping("/{sku}/inventory")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Map<String, Object>> adjustInventory(
 			@PathVariable String sku,
 			@RequestParam int delta
@@ -90,6 +97,7 @@ public class ProductController {
 	}
 
 	@DeleteMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id) {
 		try {
 			productService.deleteById(id);

@@ -35,3 +35,6 @@ management:
     web:
       exposure:
         include: health,info,metrics
+
+jwt:
+  secret: "${JWT_SECRET:MySecretKeyForJwtTokenGenerationThatIsAtLeast256BitsLongForHs256AlgorithmSecurity}"

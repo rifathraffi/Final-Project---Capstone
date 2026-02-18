@@ -1,5 +1,6 @@
 package com.example.productcatalog.repository;
 
+import com.example.productcatalog.config.TestApplication;
 import com.example.productcatalog.model.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(classes = TestApplication.class)
 @ActiveProfiles("test")
 @Transactional
 public class ProductRepositoryTest {
