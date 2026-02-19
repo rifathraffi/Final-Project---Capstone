@@ -7,9 +7,6 @@ import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
-/**
- * Java 17 record for Product DTO.
- */
 public record ProductDto(
 	Long id,
 	@NotBlank String name,

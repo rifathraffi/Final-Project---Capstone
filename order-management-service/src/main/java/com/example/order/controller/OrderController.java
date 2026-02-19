@@ -36,16 +36,16 @@ public class OrderController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(request));
 	}
 
-	@GetMapping("/{id}")
-	public ResponseEntity<OrderDto> getById(@PathVariable Long id) {
-		return orderService.findById(id)
+	@GetMapping("/number/{orderNumber}")
+	public ResponseEntity<OrderDto> getByOrderNumber(@PathVariable String orderNumber) {
+		return orderService.findByOrderNumber(orderNumber)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
-	@GetMapping("/number/{orderNumber}")
-	public ResponseEntity<OrderDto> getByOrderNumber(@PathVariable String orderNumber) {
-		return orderService.findByOrderNumber(orderNumber)
+	@GetMapping("/{id}")
+	public ResponseEntity<OrderDto> getById(@PathVariable Long id) {
+		return orderService.findById(id)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
@@ -57,11 +57,6 @@ public class OrderController {
 			return orderService.findByCustomer(customerId);
 		}
 		return orderService.findAll();
-	}
-
-	@GetMapping("/customer/{customerId}")
-	public List<OrderDto> listByCustomer(@PathVariable String customerId) {
-		return orderService.findByCustomer(customerId);
 	}
 
 	@PatchMapping("/{id}/status/{status}")

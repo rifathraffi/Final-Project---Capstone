@@ -1,22 +1,17 @@
 package com.example.order.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * OrderEntity representing customer orders
+ * Many Orders belong to One Customer (Many-to-One relationship)
+ * One Order has Many OrderItems (One-to-Many relationship)
+ */
 @Entity
 @Table(name = "orders")
 public class OrderEntity {
@@ -28,8 +23,9 @@ public class OrderEntity {
 	@Column(nullable = false, unique = true)
 	private String orderNumber;
 
-	@Column(nullable = false)
-	private String customerId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "customer_id", nullable = false)
+	private Customer customer;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -54,9 +50,9 @@ public class OrderEntity {
 	public OrderEntity() {
 	}
 
-	public OrderEntity(String orderNumber, String customerId) {
+	public OrderEntity(String orderNumber, Customer customer) {
 		this.orderNumber = orderNumber;
-		this.customerId = customerId;
+		this.customer = customer;
 		this.createdAt = Instant.now();
 		this.updatedAt = Instant.now();
 	}
@@ -82,12 +78,16 @@ public class OrderEntity {
 		this.orderNumber = orderNumber;
 	}
 
-	public String getCustomerId() {
-		return customerId;
+	public Customer getCustomer() {
+		return customer;
 	}
 
-	public void setCustomerId(String customerId) {
-		this.customerId = customerId;
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public String getCustomerId() {
+		return customer != null ? customer.getId().toString() : null;
 	}
 
 	public OrderStatusEnum getStatus() {

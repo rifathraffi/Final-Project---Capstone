@@ -6,9 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 
 import java.math.BigDecimal;
 
-/**
- * Java 17 record for order item in create request.
- */
 public record OrderItemRequest(
 	@NotBlank String sku,
 	@Min(1) Integer quantity,

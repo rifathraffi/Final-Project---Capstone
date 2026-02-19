@@ -7,7 +7,9 @@ import com.example.order.model.OrderItem;
 import com.example.order.model.CreateOrderRequest;
 import com.example.order.model.OrderDto;
 import com.example.order.model.OrderItemDto;
+import com.example.order.model.Customer;
 import com.example.order.repository.OrderRepository;
+import com.example.order.repository.CustomerRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,17 +35,23 @@ public class OrderService {
 		""";
 
 	private final OrderRepository orderRepository;
+	private final CustomerRepository customerRepository;
 	private final ProductCatalogClient productCatalogClient;
 
-	public OrderService(OrderRepository orderRepository, ProductCatalogClient productCatalogClient) {
+	public OrderService(OrderRepository orderRepository, CustomerRepository customerRepository, ProductCatalogClient productCatalogClient) {
 		this.orderRepository = orderRepository;
+		this.customerRepository = customerRepository;
 		this.productCatalogClient = productCatalogClient;
 	}
 
 	@Transactional
 	public OrderDto createOrder(CreateOrderRequest request) {
+		// Fetch the customer from the database
+		Customer customer = customerRepository.findById(request.customerId())
+				.orElseThrow(() -> new IllegalArgumentException("Customer not found with ID: " + request.customerId()));
+		
 		String orderNumber = "ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-		OrderEntity order = new OrderEntity(orderNumber, request.customerId());
+		OrderEntity order = new OrderEntity(orderNumber, customer);
 
 		BigDecimal total = BigDecimal.ZERO;
 		for (var itemReq : request.items()) {
@@ -58,9 +66,6 @@ public class OrderService {
 		return toDto(saved);
 	}
 
-	/**
-	 * Asynchronously processes order (verify inventory, update status).
-	 */
 	@Async
 	public CompletableFuture<Void> processOrderAsync(Long orderId) {
 		return CompletableFuture.runAsync(() -> {
@@ -75,7 +80,6 @@ public class OrderService {
 						order.getTotalAmount(),
 						order.getCustomerId()));
 
-				// Async verification with Product Catalog (fire-and-forget style)
 				for (OrderItem item : order.getItems()) {
 					productCatalogClient.getProductBySku(item.getSku())
 							.doOnNext(p -> log.info("Product verified: {} qty={}", p.sku(), p.quantity()))
@@ -83,7 +87,6 @@ public class OrderService {
 							.subscribe();
 				}
 
-				// Simulate async confirmation
 				orderRepository.findById(orderId).ifPresent(o -> {
 					o.setStatus(OrderStatusEnum.CONFIRMED);
 					orderRepository.save(o);

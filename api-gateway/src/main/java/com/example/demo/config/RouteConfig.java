@@ -21,6 +21,10 @@ public class RouteConfig {
 				.route(p -> p.path("/api/v1/orders/**")
 						.filters(f -> f.filter(custom))
 						.uri("lb://order-management-service"))
+				// Customer Service - JWT required
+				.route(p -> p.path("/api/v1/customers/**")
+						.filters(f -> f.filter(custom))
+						.uri("lb://order-management-service"))
 				// Auth endpoints - no JWT (legacy/external services)
 				.route(p -> p.path("/api/v1/auth/**").uri("lb://JWT-AUTH-SERVICE"))
 				.build();

@@ -10,6 +10,6 @@ import java.util.List;
  * Java 17 record for create order request.
  */
 public record CreateOrderRequest(
-	@NotBlank String customerId,
+	Long customerId,
 	@NotEmpty @Valid List<OrderItemRequest> items
 ) {}

@@ -76,7 +76,6 @@ public class ProductService {
 					int next = Math.max(0, prev + delta);
 					p.setQuantity(next);
 					productRepository.save(p);
-					// Text block used for structured log (Java 17)
 					System.getLogger(ProductService.class.getName()).log(System.Logger.Level.INFO,
 							INVENTORY_LOG_TEMPLATE.formatted(sku, prev, next, delta >= 0 ? "ADD" : "REMOVE"));
 					return (InventoryResult) new InventorySuccess(sku, next);

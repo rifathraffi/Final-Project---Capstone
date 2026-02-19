@@ -1,15 +1,14 @@
 package com.example.productcatalog.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
+/**
+ * Product entity representing products in catalog
+ * Many Products belong to One Category (Many-to-One relationship)
+ */
 @Entity
 @Table(name = "products")
 public class Product {
@@ -32,6 +31,10 @@ public class Product {
 
 	@Column(nullable = false, unique = true)
 	private String sku;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "category_id", nullable = true)
+	private Category category;
 
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private Instant createdAt;
@@ -111,5 +114,13 @@ public class Product {
 
 	public Instant getUpdatedAt() {
 		return updatedAt;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 }
