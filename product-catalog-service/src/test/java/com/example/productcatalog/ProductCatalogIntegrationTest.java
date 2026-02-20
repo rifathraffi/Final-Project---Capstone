@@ -247,11 +247,13 @@ public class ProductCatalogIntegrationTest {
 				.content(objectMapper.writeValueAsString(testProductDto)))
 				.andExpect(status().isCreated());
 
-		// Try to create second product with same SKU
+		// Try to create second product with same SKU (should return 409 CONFLICT)
 		mockMvc.perform(post("/api/v1/products")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(testProductDto)))
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isConflict())
+				.andExpect(jsonPath("$.status").value(409))
+				.andExpect(jsonPath("$.error").value("CONFLICT"));
 	}
 
 	@Test
@@ -385,7 +387,7 @@ public class ProductCatalogIntegrationTest {
 				.param("delta", "5")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.status").value("error"))
-				.andExpect(jsonPath("$.message").value("Product not found"));
+				.andExpect(jsonPath("$.status").value(404))
+				.andExpect(jsonPath("$.error").value("INVENTORY_ERROR"));
 	}
 }

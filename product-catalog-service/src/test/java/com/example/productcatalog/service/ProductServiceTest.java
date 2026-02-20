@@ -1,5 +1,8 @@
 package com.example.productcatalog.service;
 
+import com.example.productcatalog.exception.InventoryException;
+import com.example.productcatalog.exception.ProductAlreadyExistsException;
+import com.example.productcatalog.exception.ProductNotFoundException;
 import com.example.productcatalog.model.InventoryError;
 import com.example.productcatalog.model.InventoryResult;
 import com.example.productcatalog.model.InventorySuccess;
@@ -141,7 +144,7 @@ public class ProductServiceTest {
 	public void testCreateProductSkuAlreadyExists() {
 		when(productRepository.existsBySku("TEST-SKU-001")).thenReturn(true);
 
-		assertThrows(IllegalArgumentException.class, () -> {
+		assertThrows(ProductAlreadyExistsException.class, () -> {
 			productService.create(testProductDto);
 		});
 
@@ -271,12 +274,10 @@ public class ProductServiceTest {
 	public void testAdjustInventoryProductNotFound() {
 		when(productRepository.findBySku("NON-EXISTENT-SKU")).thenReturn(Optional.empty());
 
-		InventoryResult result = productService.adjustInventory("NON-EXISTENT-SKU", 5);
+		assertThrows(InventoryException.class, () -> {
+			productService.adjustInventory("NON-EXISTENT-SKU", 5);
+		});
 
-		assertInstanceOf(InventoryError.class, result);
-		InventoryError error = (InventoryError) result;
-		assertEquals("NON-EXISTENT-SKU", error.sku());
-		assertEquals("Product not found", error.message());
 		verify(productRepository, times(1)).findBySku("NON-EXISTENT-SKU");
 		verify(productRepository, never()).save(any(Product.class));
 	}
@@ -296,7 +297,7 @@ public class ProductServiceTest {
 	public void testDeleteByIdNotFound() {
 		when(productRepository.existsById(999L)).thenReturn(false);
 
-		assertThrows(IllegalArgumentException.class, () -> {
+		assertThrows(ProductNotFoundException.class, () -> {
 			productService.deleteById(999L);
 		});
 

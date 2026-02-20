@@ -1,4 +1,5 @@
 package com.example.productcatalog.controller;
+import com.example.productcatalog.exception.GlobalExceptionHandler;
 import com.example.productcatalog.model.InventoryError;
 import com.example.productcatalog.model.InventorySuccess;
 import com.example.productcatalog.model.ProductDto;
@@ -42,7 +43,9 @@ public class ProductControllerTest {
 
 	@BeforeEach
 	public void setUp() {
-		mockMvc = MockMvcBuilders.standaloneSetup(productController).build();
+		mockMvc = MockMvcBuilders.standaloneSetup(productController)
+				.setControllerAdvice(new GlobalExceptionHandler())
+				.build();
 		objectMapper = new ObjectMapper();
 
 		testProductDto = new ProductDto(
@@ -254,16 +257,17 @@ public class ProductControllerTest {
 
 	@Test
 	public void testAdjustInventoryProductNotFound() throws Exception {
-		InventoryError error = new InventoryError("NON-EXISTENT-SKU", "Product not found");
-		when(productService.adjustInventory("NON-EXISTENT-SKU", 5)).thenReturn(error);
+		// Mock the service to throw InventoryException for non-existent product
+		when(productService.adjustInventory("NON-EXISTENT-SKU", 5))
+				.thenThrow(new com.example.productcatalog.exception.InventoryException("Product not found with SKU: NON-EXISTENT-SKU", 404));
 
 		mockMvc.perform(patch("/api/v1/products/NON-EXISTENT-SKU/inventory")
 				.param("delta", "5")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.sku").value("NON-EXISTENT-SKU"))
-				.andExpect(jsonPath("$.message").value("Product not found"))
-				.andExpect(jsonPath("$.status").value("error"));
+				.andExpect(jsonPath("$.status").value(404))
+				.andExpect(jsonPath("$.error").value("INVENTORY_ERROR"))
+				.andExpect(jsonPath("$.message").exists());
 
 		verify(productService, times(1)).adjustInventory("NON-EXISTENT-SKU", 5);
 	}
